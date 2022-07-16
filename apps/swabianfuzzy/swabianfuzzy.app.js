@@ -2,31 +2,31 @@
 
 let fuzzy_string = {
   "hours":[
-    "Zwölwe",
-    "Oinse",
-    "Zwoie",
-    "Dreie",
-    "Viere",
-    "Fünfe",
-    "Sechse",
-    "Siebene",
-    "Achte",
-    "Neine",
-    "Zehne",
-    "Elfe"
+    "zwölfe",
+    "einse",
+    "zwoie",
+    "dreie",
+    "viere",
+    "fünfe",
+    "sechse",
+    "siebene",
+    "achte",
+    "neune",
+    "zehne",
+    "elfe"
   ],
   "minutes":[
     "*$1",
-    "fünf noch *$1",
-    "zea noch *$1",
+    "fünf nach *$1",
+    "zehn nach *$1",
     "viertel *$2",
-    "zwanzig noch *$1",
-    "fünfezwanzg noch *$1",
-    "halbe *$2",
+    "zwanzig nach *$1",
+    "fünfezwanzg nach *$1",
+    "halb *$2",
     "fünf nach halb *$2",
-    "zeha nach halb *$2",
+    "zehn nach halb *$2",
     "dreiviertel *$2",
-    "zeha vor *$2",
+    "zehn vor *$2",
     "fünf vor *$2"
   ]
 };
@@ -59,19 +59,28 @@ function getTimeString(date) {
     return f_string;
 }
 
-function draw() {
-  let time_string = getTimeString(new Date()).replace('*', '');
+function draw(lcdOn) {
+  let date = new Date();
+  let time_string = getTimeString(date).replace('*', '');
   // print(time_string);
   g.setFont('Vector', (h-24*2)/text_scale);
   g.setFontAlign(0, 0);
-  g.clearRect(0, 24, w, h-24);
+  g.clearRect(0, 24, w, h);
   g.setColor(g.theme.fg);
   g.drawString(g.wrapString(time_string, w).join("\n"), w/2, h/2);
+  var da = date.toString().split(" ");
+  var time = da[4].substr(0, 5).split(":");
+  var hours = time[0], minutes = time[1];
+  var datestr = da[2] + ' ' + da[1] + ' ' + da[3];
+  g.setFont("12x20", 1);
+  g.setFontAlign(0, 0);
+  g.drawString(`${hours}:${minutes} `+datestr , w/2, h-10, true);
+  //date.getHours()+':'+date.getMinutes()+" - "+ date.getDate()+'.'+date.getMonth()+'.'+date.getFullYear(), g.getWidth()/2, g.getHeight()-20, true);
   queueDraw(timeout);
 }
 
 g.clear();
-draw();
+draw(true);
 
 // Stop updates when LCD is off, restart when on
 Bangle.on('lcdPower',on=>{
