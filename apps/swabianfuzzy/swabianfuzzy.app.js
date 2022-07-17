@@ -20,7 +20,7 @@ let fuzzy_string = {
     "fünf nach *$1",
     "zea nach *$1",
     "viertl *$2",
-    "zwanzg nache *$1",
+    "zwanzg nach *$1",
     "fünf vor halbe *$2",
     "halbe *$2",
     "fünf nach halbe *$2",
