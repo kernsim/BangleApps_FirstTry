@@ -2,7 +2,7 @@
   "id":"swabianfuzzy",
   "name":"Fuzzy Text Clock auf schwaebisch",
   "shortName": "SwFuzzy",
-  "version": "0.04",
+  "version": "0.05",
   "description": "A Uhr für die Dag an dene es it drauf akommt.",
   "readme": "README.md",
   "icon":"swabianfuzzy.png",

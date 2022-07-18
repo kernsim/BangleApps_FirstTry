@@ -41,7 +41,10 @@ let timeout_fuzzy = 2.5 * 60;
 let timeout_steps = 2;
 let timeout_battery = 2.5 * 60;
 let drawTimeout;
-let screen = "fuzzy";
+
+let screens = ["fuzzy", "clock", "steps", "battery"];
+let screen_index = 0;
+
 
 function queueDraw(seconds) {
   let millisecs = seconds * 1000;
@@ -79,6 +82,16 @@ function getDateString(date) {
   return `${da[0]} ${da[2]}. ${da[1]} ${da[3]}`;
 }
 
+function drawString1(text) {
+  g.setFont('Vector', 30);
+  g.drawString(text, w / 2, h / 2 + 30);
+}
+
+function drawString2(text) {
+  g.setFont('Vector', 15);
+  g.drawString(text, w / 2, h / 2 + 60);
+}
+
 function draw() {
   let date = new Date();
 
@@ -87,7 +100,7 @@ function draw() {
   g.setFontAlign(0, 0);
   g.drawImage(img, 40, 0);
 
-  switch (screen) {
+  switch (screens[screen_index]) {
     case "fuzzy":
       let time_string = getFuzzyTimeString(date).replace('*', '');
       g.setFont('Vector', 30);
@@ -95,24 +108,18 @@ function draw() {
       queueDraw(timeout_fuzzy);
       break;
     case "clock":
-      g.setFont('Vector', 30);
-      g.drawString(getTimeString(date), w / 2, h / 2 + 30);
-      g.setFont('Vector', 15);
-      g.drawString(getDateString(date), w / 2, h / 2 + 60);
+      drawString1(getTimeString(date));
+      drawString2(getDateString(date));
       queueDraw(timeout_clock);
       break;
     case "steps":
-      g.setFont('Vector', 30);
-      g.drawString(Bangle.getStepCount(), w / 2, h / 2 + 30);
-      g.setFont('Vector', 15);
-      g.drawString("Schritte", w / 2, h / 2 + 60);
+      drawString1(Bangle.getStepCount());
+      drawString2("Schritte");
       queueDraw(timeout_steps);
       break;
     case "battery":
-      g.setFont('Vector', 30);
-      g.drawString(`${E.getBattery()}%`, w / 2, h / 2 + 30);
-      g.setFont('Vector', 15);
-      g.drawString("Batterie", w / 2, h / 2 + 60);
+      drawString1(`${E.getBattery()}%`);
+      drawString2("Batterie");
       queueDraw(timeout_battery);
       break;
   }
@@ -131,21 +138,19 @@ Bangle.on('lcdPower', on => {
     drawTimeout = undefined;
   }
 });
+
 Bangle.on('lock', on => {
-  screen = "fuzzy";
+  screen_index = 0;
   queueDraw(1); // draw after widgets
 });
 
-
-screens = ["fuzzy", "clock", "steps", "battery"];
-
 Bangle.on('swipe', function (directionLR, directionUD) {
   if (directionLR + directionUD > 0) {
-    screen = screens.shift();
-    screens.push(screen);
+    screen_index += 1;
+    if (screen_index == screens.length) screen_index = 0;
   } else {
-    screen = screens.pop();
-    screens.unshift(screen);
+    screen_index -= 1;
+    if (screen_index == -1) screen_index = screens.length - 1;
   }
   draw();
 });
