@@ -113,7 +113,7 @@ function draw() {
       queueDraw(timeout_clock);
       break;
     case "steps":
-      drawString1(Bangle.getStepCount());
+      drawString1(Bangle.getHealthStatus("day").steps);
       drawString2("Schritte");
       queueDraw(timeout_steps);
       break;
