@@ -1,0 +1,24 @@
+{
+  "id": "tpclock",
+  "name": "TPClock",
+  "version": "0.01",
+  "description": "Tom Petty and the Heartbreakers Clock Face. Didn't ask for permission.",
+  "icon": "app.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": [
+    "BANGLEJS2"
+  ],
+  "readme": "README.md",
+  "storage": [
+    {
+      "name": "tpclock.app.js",
+      "url": "app.js"
+    },
+    {
+      "name": "tpclock.img",
+      "url": "app-icon.js",
+      "evaluate": true
+    }
+  ]
+}
