@@ -1,3 +1,48 @@
+/**** custom version of Bangle.drawWidgets (does not clear the widget areas) ****/
+
+Bangle.drawWidgets = function () {
+  var w = g.getWidth(), h = g.getHeight();
+
+  var pos = {
+    tl:{x:0,   y:0,    r:0, c:0}, // if r==1, we're right->left
+    tr:{x:w-1, y:0,    r:1, c:0},
+    bl:{x:0,   y:h-24, r:0, c:0},
+    br:{x:w-1, y:h-24, r:1, c:0}
+  };
+
+  if (global.WIDGETS) {
+    for (var wd of WIDGETS) {
+      var p = pos[wd.area];
+      if (!p) continue;
+
+      wd.x = p.x - p.r*wd.width;
+      wd.y = p.y;
+
+      p.x += wd.width*(1-2*p.r);
+      p.c++;
+    }
+
+    g.reset();                                 // also loads the current theme
+
+    if (pos.tl.c || pos.tr.c) {
+      g.setClipRect(0,h-24,w-1,h-1);
+      g.reset();                           // also (re)loads the current theme
+    }
+
+    if (pos.bl.c || pos.br.c) {
+      g.setClipRect(0,h-24,w-1,h-1);
+      g.reset();                           // also (re)loads the current theme
+    }
+
+    try {
+      for (wd of WIDGETS) {
+        g.clearRect(wd.x,wd.y, wd.x+wd.width-1,23);
+        wd.draw(wd);
+      }
+    } catch (e) { print(e); }
+  }
+};
+
 Graphics.prototype.setFontUndo = function(scale) {
   // Actual height 19 (20 - 2)
   this.setFontCustom(atob("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKqKAqooCqigKqKAAAACgAAKAAAoAACgAAAAAAAAACgAAKAAAoAACgAAAAAAKCgAoKAKqqAqqoCqqgKqqAKCgAoKAKqqAqqoCqqgKqqAKCgAoKAAAAAKgoAqCgKqKAqooKiioqKKiooqKiioKKqAoqoCgqAKCoAAAACoCgKgKAiCoCIKgKioAqKgACoAAKgACoAAKgACoqAKioCoIgKgiAoCoCgKgAAAAKqgAqqAKqqAqqoKiioqKKiooqKiioKAKAoAoCgCgKAKAAAACgAAKAAAoAACgAAAAAAKqgAqqAKqqAqqoCgCgKAKAAAACgCgKAKAqqoCqqgCqoAKqgAAAACigAKKAAqoACqgAqoACqgAKqAAqoAAqoACqgAKKAAooAAAAAAoAACgAAKAAAoAAqqACqoAKqgAqqAAKAAAoAACgAAKAAAAAAACoAAKgAAqAACoAAAAAoAACgAAKAAAoAACgAAKAAAoAACgAAKAAAoAACgAAKAAAAAAACgAAKAAAoAACgAAAAAAoAACgAAqAACoAAqAACoAAqAACoAAqAACoAAqAACoAAqAACoAAKAAAoAAAAAACqoAKqgCqqgKqqAoAoCgCgKAKAoAoCqqgKqqAKqgAqqAAAAAqqoCqqgKqqAqqoAAAAKCqAoKoCiqgKKqAoooCiigKKKAoooCqigKqKAKgoAqCgAAAAoAoCgCgKAKAoAoCiigKKKAoooCiigKqqAqqoAqqACqoAAAACqAAKoAAqoACqgAAKAAAoAACgAAKAAqqoCqqgKqqAqqoAAAAKoKAqgoCqigKqKAoooCiigKKKAoooCiqgKKqAoKgCgqAAAAAKqgAqqAKqqAqqoCiigKKKAoooCiigKKqAoqoCgqAKCoAAAACgAAKAAAoAACgAAKAAAoAACgAAKAAAqqoCqqgCqqAKqoAAAACqoAKqgCqqgKqqAoooCiigKKKAoooCqqgKqqAKqgAqqAAAAAKgAAqAAKqAAqoACigAKKAAooACigAKqqAqqoAqqgCqqAAAACgCgKAKAoAoCgCgAAAAoAqCgCoKAKgoAqAAAAAKAAAoAAKoAAqgAKqgAqqAKgqAqCoCgCgKAKAAAAAoKACgoAKCgAoKACgoAKCgAoKACgoAKCgAoKACgoAKCgAAAAKAKAoAoCoKgKgqAKqgAqqAAqgACqAACgAAKAAAAACgAAKAAAoAACgAAKKKAoooCiigKKKAqoACqgACoAAKgAAAAACqqAKqoCqqgKqqAoAACgAAKCoAoKgCiqgKKqAoooCiigKqqAqqoAqqACqoAAAAAqqgCqqAqqoCqqgKKAAooACigAKKAAqqoCqqgCqqAKqoAAAAKqqAqqoCqqgKqqAoooCiigKKKAoooCqqgKqqAKCgAoKAAAAAKqgAqqAKqqAqqoCgCgKAKAoAoCgCgKAKAoAoCgCgKAKAAAACqqgKqqAqqoCqqgKAKAoAoCoKgKgqAKqgAqqAAqgACqAAAAACqoAKqgCqqgKqqAoooCiigKKKAoooCgCgKAKAoAoCgCgAAAAKqoAqqgKqqAqqoCigAKKAAooACigAKAAAoAACgAAKAAAAAAAqqACqoAqqoCqqgKAKAoAoCiigKKKAoqoCiqgKKqAoqoAAAAKqqAqqoCqqgKqqAAoAACgAAKAAAoACqqgKqqAqqoCqqgAAAAoAoCgCgKAKAoAoCqqgKqqAqqoCqqgKAKAoAoCgCgKAKAAAAAAKAAAoAACoAAKgAAKAAAoAACgAAKAqqoCqqgKqoAqqgAAAAKqqAqqoCqqgKqqACqAAKoACqoAKqgCoKgKgqAoAoCgCgAAAAqqgCqqAKqqAqqoAACgAAKAAAoAACgAAKAAAoAACgAAKAAAACqqgKqqAqqoCqqgCoAAKgAAKgAAqAAKgAAqAAKqqAqqoCqqgKqqAAAACqqgKqqAqqoCqqgCoAAKgAAKgAAqAAqqoCqqgKqqAqqoAAAACqoAKqgCqqgKqqAoAoCgCgKAKAoAoCqqgKqqAKqgAqqAAAAAqqoCqqgKqqAqqoCigAKKAAooACigAKqAAqoAAqAACoAAAAAAqqACqoAqqoCqqgKAKAoAoCgKgKAqAqqoCqqgCqqAKqoAAAAKqqAqqoCqqgKqqAooACigAKKgAoqACqqgKqqAKioAqKgAAAAKgoAqCgKqKAqooCiigKKKAoooCiigKKqAoqoCgqAKCoAAAACgAAKAAAoAACgAAKqqAqqoCqqgKqqAoAACgAAKAAAoAAAAAAKqoAqqgCqqgKqqAAAoAACgAAKAAAoCqqgKqqAqqgCqqAAAAAqqACqoAKqoAqqgAAKgAAqAACoAAKgKqoAqqgCqoAKqgAAAACqqgKqqAqqoCqqgACoAAKgACoAAKgAAKgAAqAKqqAqqoCqqgKqqAAAACoKgKgqAqqoCqqgAqgACqAAKoAAqgAqqoCqqgKgqAqCoAAAAKoAAqgACqgAKqAAAqoACqgAKqAAqoCqgAKqAAqgACqAAAAAAoCoCgKgKCqAoKoCiqgKKqAqooCqigKoKAqgoCoCgKgKAAAACqqgKqqAqqoCqqgKAKAoAoAAAAKAAAoAACoAAKgAAKgAAqAAAqAACoAACoAAKgAAKgAAqAAAqAACoAACgAAKAAAACgCgKAKAqqoCqqgKqqAqqoAAA"), 32, atob("DQULDw0RDQUHBw0NBQ0FEQ0FDQ0NDQ0NDQ0FBQsNCw0RDQ0NDQ0NDQ0NDQ0NDw0NDQ0NDQ0NDQ8NDQ0HEQc="), 22+(scale<<8)+(1<<16));
@@ -28,7 +73,7 @@ function draw() {
   // queue draw in one minute
   queueDraw();
 
-  g.reset().clearRect(0,24,g.getWidth(),g.getHeight());
+  g.reset().clear(); // Rect(0,24,g.getWidth(),g.getHeight());
   g.drawImage(getImg(),0,0);
 
 
@@ -41,7 +86,7 @@ function draw() {
   g.setColor(1,1,1);
   g.drawString(`${hours}`, 92, 176/2);
   g.drawString(`${minutes}`, 140, 125);
-  //Bangle.drawWidgets();
+  Bangle.drawWidgets();
 }
 
 Bangle.loadWidgets();
