@@ -93,7 +93,7 @@ function draw() {
   
   switch (screens[screen_index]) {
     case "fullscreen":
-      for (let wd of global.WIDGETS) {wd.draw=()=>{};wd.area="";}
+      // for (let wd of global.WIDGETS) {wd.draw=()=>{};wd.area="";}
       break;
     case "widgets":
       Bangle.drawWidgets();
