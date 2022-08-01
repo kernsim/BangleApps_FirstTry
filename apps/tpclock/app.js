@@ -28,7 +28,7 @@ function draw() {
   // queue draw in one minute
   queueDraw();
 
-  g.reset().clear();
+  g.reset().clearRect(0,24,g.getWidth(),g.getHeight());
   g.drawImage(getImg(),0,0);
 
 
@@ -49,6 +49,7 @@ Bangle.loadWidgets();
 // Clear the screen once, at startup
 //g.setTheme({bg:"#000",fg:"#fff",dark:false}).clear();
 // draw immediately at first, queue update
+g.reset().clear();
 draw();
 
 // Stop updates when LCD is off, restart when on
