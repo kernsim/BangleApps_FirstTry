@@ -69,6 +69,10 @@ function queueDraw() {
   }, 60000 - (Date.now() % 60000));
 }
 
+
+let screens = ["fullscreen", "widgets"];
+let screen_index = 0;
+
 function draw() {
   // queue draw in one minute
   queueDraw();
@@ -86,7 +90,14 @@ function draw() {
   g.setColor(1,1,1);
   g.drawString(`${hours}`, 92, 176/2);
   g.drawString(`${minutes}`, 140, 125);
-  Bangle.drawWidgets();
+  
+  switch (screens[screen_index]) {
+    case "fullscreen":
+      break;
+    case "widgets":
+      Bangle.drawWidgets();
+      break;
+  }
 }
 
 Bangle.loadWidgets();
@@ -111,6 +122,17 @@ Bangle.on('lock', function(isLocked) {
   print("LOCK");
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = undefined;
+  draw();
+});
+
+Bangle.on('swipe', function (directionLR, directionUD) {
+  if (directionLR + directionUD > 0) {
+    screen_index += 1;
+    if (screen_index == screens.length) screen_index = 0;
+  } else {
+    screen_index -= 1;
+    if (screen_index == -1) screen_index = screens.length - 1;
+  }
   draw();
 });
 
